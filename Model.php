@@ -1,11 +1,13 @@
 <?php
 
 /*
- * author : sintret@gmail.com
+ * @author : Andy Fitria
+ * <sintret@gmail.com>
  * simple pdo class
- * sintret.com
+ * http://sintret.com
  */
- 
+
+
 include 'Db.php';
 
 class Model {
@@ -45,15 +47,17 @@ class Model {
         }
     }
 
-    public function statement()
+    public function statement($statement = NULL)
     {
-        return $this->selectFrom . $this->where . $this->limit;
+        if (empty($statement))
+            return $this->selectFrom . $this->where . $this->limit;
+        else
+            return $statement;
     }
 
     public function one()
     {
         $this->limit = " LIMIT 1 ";
-        //echo $this->statement(); exit(0);
         $query = Db::instance();
         $row = $query->prepare($this->statement());
         if (count($this->arrayWhere)) {

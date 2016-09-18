@@ -1,9 +1,10 @@
 <?php
 
 /*
- * author : sintret@gmail.com
+ * @author : Andy Fitria
+ * <sintret@gmail.com>
  * simple pdo class
- * sintret.com
+ * http://sintret.com
  */
 
 class Db {
