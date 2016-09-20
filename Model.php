@@ -12,6 +12,7 @@ include 'Db.php';
 
 class Model {
 
+    public $connect;
     public $statement;
     public $selectFrom;
     public $where;
@@ -21,12 +22,7 @@ class Model {
 
     public function __construct()
     {
-
-//        if (!isset(self::$_instance)) {
-//            self::$_instance = \sintret\db\Db::instance();
-//        }
-//
-//        return self::$_instance;
+        return $this->connect = Db::instance();
     }
 
     public function find($table)
@@ -58,8 +54,7 @@ class Model {
     public function one()
     {
         $this->limit = " LIMIT 1 ";
-        $query = Db::instance();
-        $row = $query->prepare($this->statement());
+        $row = $this->connect->prepare($this->statement());
         if (count($this->arrayWhere)) {
             foreach ($this->arrayWhere as $k => $v) {
                 $row->bindParam(":" . $k, $v);
@@ -72,8 +67,7 @@ class Model {
 
     public function all()
     {
-        $query = Db::instance();
-        $row = $query->prepare($this->statement());
+        $row = $this->connect->prepare($this->statement());
         if (count($this->arrayWhere)) {
             foreach ($this->arrayWhere as $k => $v) {
                 $row->bindParam(":" . $k, $v);
@@ -83,5 +77,4 @@ class Model {
 
         return $row->fetchAll(\PDO::FETCH_OBJ);
     }
-
 }
