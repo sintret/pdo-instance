@@ -15,4 +15,10 @@ Edit the file in `Db.php` with real data, for example :
     protected static $dsn = "mysql:host=localhost;dbname=test";
 ```
 
+Query Programming
+-------------
 
+
+### Migration
+
+Migration is simple inject your database using default data including for grid. You need open your console and then please follow code below 
