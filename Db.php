@@ -4,7 +4,7 @@
  * @author : Andy Fitria
  * <sintret@gmail.com>
  * simple pdo class
- * http://sintret.com
+ * https://sintret.com
  */
 
 class Db {
@@ -40,10 +40,12 @@ class Db {
             } catch (PDOException $e) {
 
                 //TODO: flag to disable errors?
+                //echo $e->getMessage();
                 throw $e;
             } catch (Exception $e) {
 
                 //TODO: flag to disable errors?
+                //echo $e->getMessage();
                 throw $e;
             }
         }
@@ -56,12 +58,12 @@ class Db {
      */
     protected function __construct()
     {
-        
+
     }
 
     function __destruct()
     {
-        
+
     }
 
     /** PHP seems to need these stubbed to ensure true singleton * */

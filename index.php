@@ -2,18 +2,36 @@
 
 ini_set("dispaly_errors", 1);
 
-include 'Model.php';
-
-$query = new Model();
-
-$query->find('article');
-//$query->where(['id' => 8]);
-$r = $query->all();
-
-echo "<pre>";
-print_r($r);
+include 'Query.php';
 
 
-echo $r->id;
 
-echo "test";
+
+/*
+ * select * from user where roleId = 3
+ * with all data
+ * just like this following code
+ */
+
+$query = new Query;
+$query->find("user")
+        ->where(['roleId' => 3])
+        ->limit(2)
+        ->orderBy("id desc");
+
+$result = $query->all();
+
+//print result
+echo "<pre>";print_r($result);
+
+//print result single row using one()
+$one = $query->one();
+echo "<pre>";print_r($one);
+
+
+
+// looping
+if ($result)
+    foreach ($result as $res) {
+        echo ' id :' . $res->id . ' username is :' . $res->username;
+    }
