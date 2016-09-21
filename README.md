@@ -23,7 +23,7 @@ Please ensure you have include 'Query.php'
 
 ### select one
 
-This following code will get single row.
+This following code will get single row using `one` method.
 ```php
 $query = new Query;
 $query->find("my_table")
@@ -33,5 +33,35 @@ $query->find("my_table")
 //print result single row using one()
 $one = $query->one();
 echo "<pre>";print_r($one);
+
+```
+
+
+### select all with limit
+
+This following code will get many row using `all` method.
+```php
+$query = new Query;
+$query->find("user")
+        ->where(['roleId' => 3])
+        ->limit(2)
+        ->orderBy("id desc");
+
+$result = $query->all();
+
+//print result
+echo "<pre>";print_r($result);
+```
+
+### looping
+
+Looping example,
+
+```php
+// looping
+if ($result)
+    foreach ($result as $res) {
+        echo ' id :' . $res->id . ' username is :' . $res->username;
+    }
 
 ```
