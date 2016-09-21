@@ -39,6 +39,7 @@ echo "<pre>";print_r($one);
 
 ### select all with limit
 
+
 This following code will get many row using `all` method.
 ```php
 $query = new Query;
@@ -53,7 +54,9 @@ $result = $query->all();
 echo "<pre>";print_r($result);
 ```
 
+
 ### looping
+
 
 Looping example,
 
