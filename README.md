@@ -75,7 +75,7 @@ echo 'my id is:' . $query->id . ' and my name is ' . $query->name. ' and table n
 
 ### update data
 
-This following example how to insert data 
+This following example how to update data and using where and one() method
 ```php
 $user = new Query();
 $user->find('user')->where(['id' => 12])->one();
