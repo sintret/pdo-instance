@@ -60,7 +60,7 @@ echo "<pre>";print_r($result);
 This following example how to insert data 
 ```php
 $query = new Query;
-$query->create('user');
+$query->find('user');
 $query->name = "Andy Laser";
 $query->email = 'my_email@gmail.com';
 $query->username = "laser";

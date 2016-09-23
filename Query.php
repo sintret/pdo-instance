@@ -22,6 +22,7 @@ class Query {
     public $create;
     public $table;
     public $_property = [];
+    public $isModel = false;
 
     public function __construct()
     {
@@ -42,13 +43,6 @@ class Query {
         if (!property_exists($this, $key)) {
             return $this->_property->$key;
         }
-    }
-
-    public function create($table)
-    {
-        $this->table = $table;
-
-        return $this;
     }
 
     public function fields($array = [])
@@ -115,6 +109,8 @@ class Query {
         }
         $row->execute();
 
+        $this->isModel = true;
+
         return $row->fetch(\PDO::FETCH_OBJ);
     }
 
@@ -133,15 +129,21 @@ class Query {
 
     public function save()
     {
-        $statement = 'insert into `' . $this->table . '`  ';
+        if ($this->isModel) {
+            
+        } else {
+            $statement = 'insert into `' . $this->table . '`  ';
+            $statement .= "(" . implode(",", array_keys($this->_property)) . ")";
+            $statement .= ' VALUES ';
+            $statement .= "(:" . implode(",:", array_keys($this->_property)) . ")";
 
-        $statement .= "(" . implode(",", array_keys($this->_property)) . ")";
-        $statement .= ' VALUES ';
-        $statement .= "(:" . implode(",:", array_keys($this->_property)) . ")";
+            $this->statement = $statement;
+        }
 
-        $query = $this->connect->prepare($statement);
+
+        $query = $this->connect->prepare($this->statement);
         $query->execute($this->_property);
-        
+
         $this->_property = $this->find($this->table)->where(['id' => $this->connect->lastInsertId()])->one();
 
         return $this;

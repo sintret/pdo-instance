@@ -3,9 +3,6 @@
 ini_set("dispaly_errors", 1);
 include 'Query.php';
 
-
-
-
 /*
  * select * from user where roleId = 3
  * with all data
@@ -41,12 +38,21 @@ echo "<p>&nbsp;</p>";
 // insert into
 
 $query = new Query;
-$query->create('user');
+$query->find('user');
 $query->name = "Andy Laser";
 $query->email = 'my_email@gmail.com';
 $query->username = "laser";
 $query->save();
 
-echo "<pre>";print_r($query);
+echo "<pre>";
+print_r($query);
 
-echo 'my id is:' . $query->id . ' and my name is ' . $query->name. ' and table name is ' . $query->table;
+echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table name is ' . $query->table;
+
+//
+//
+//$user = new Query();
+//$user->find('user')->where(['id' => 12])->one();
+//
+//$user->username = 'laser12';
+//$user->save();
