@@ -67,6 +67,9 @@ $query->username = "laser";
 $query->save();
 
 echo "<pre>";print_r($query);
+
+echo 'my id is:' . $query->id . ' and my name is ' . $query->name. ' and table name is ' . $query->table;
+
 ```
 
 

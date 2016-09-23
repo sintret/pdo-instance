@@ -49,6 +49,4 @@ $query->save();
 
 echo "<pre>";print_r($query);
 
-
-
-echo 'update date is :' . $query->updateDate . ' and table name is ' . $query->table;
+echo 'my id is:' . $query->id . ' and my name is ' . $query->name. ' and table name is ' . $query->table;
