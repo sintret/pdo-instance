@@ -55,6 +55,21 @@ echo "<pre>";print_r($result);
 ```
 
 
+### insert data
+
+This following example how to insert data 
+```php
+$query = new Query;
+$query->create('user');
+$query->name = "Andy Laser";
+$query->email = 'my_email@gmail.com';
+$query->username = "laser";
+$query->save();
+
+echo "<pre>";print_r($query);
+```
+
+
 ### looping
 
 

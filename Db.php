@@ -40,12 +40,12 @@ class Db {
             } catch (PDOException $e) {
 
                 //TODO: flag to disable errors?
-                //echo $e->getMessage();
+                echo $e->getMessage() . $e->getLine();
                 throw $e;
             } catch (Exception $e) {
 
                 //TODO: flag to disable errors?
-                //echo $e->getMessage();
+                echo $e->getMessage() . $e->getLine();
                 throw $e;
             }
         }

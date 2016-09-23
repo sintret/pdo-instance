@@ -11,21 +11,56 @@ include 'Db.php';
 
 class Query {
 
-    public $connect;
+    private $connect;
     public $statement;
     public $selectFrom;
+    public $insertInto;
     public $where;
     public $limit;
     public $arrayWhere;
     public $orderBy;
+    public $create;
+    public $table;
+    public $_property = [];
 
     public function __construct()
     {
         return $this->connect = Db::instance();
     }
 
+    public function __set($key, $value)
+    {
+        if (!property_exists($this, $key)) {
+            $this->_property[$key] = $value;
+        }
+
+        return $this;
+    }
+
+    public function __get($key)
+    {
+        if (!property_exists($this, $key)) {
+            return $this->_property->$key;
+        }
+    }
+
+    public function create($table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
+    public function fields($array = [])
+    {
+        $this->_property = $array;
+
+        return $this;
+    }
+
     public function find($table)
     {
+        $this->table = $table;
         $this->selectFrom = "select * from `$table` ";
 
         return $this;
@@ -56,7 +91,7 @@ class Query {
 
     public function limit($num)
     {
-        $this->limit = " LIMIT ".$num." ";
+        $this->limit = " LIMIT " . $num . " ";
 
         return $this;
     }
@@ -94,6 +129,22 @@ class Query {
         $row->execute();
 
         return $row->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+    public function save()
+    {
+        $statement = 'insert into `' . $this->table . '`  ';
+
+        $statement .= "(" . implode(",", array_keys($this->_property)) . ")";
+        $statement .= ' VALUES ';
+        $statement .= "(:" . implode(",:", array_keys($this->_property)) . ")";
+
+        $query = $this->connect->prepare($statement);
+        $query->execute($this->_property);
+        
+        $this->_property = $this->find($this->table)->where(['id' => $this->connect->lastInsertId()])->one();
+
+        return $this;
     }
 
 }

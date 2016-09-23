@@ -1,7 +1,6 @@
 <?php
 
 ini_set("dispaly_errors", 1);
-
 include 'Query.php';
 
 
@@ -22,11 +21,13 @@ $query->find("user")
 $result = $query->all();
 
 //print result
-echo "<pre>";print_r($result);
+echo "<pre>";
+print_r($result);
 
 //print result single row using one()
 $one = $query->one();
-echo "<pre>";print_r($one);
+echo "<pre>";
+print_r($one);
 
 
 
@@ -35,3 +36,19 @@ if ($result)
     foreach ($result as $res) {
         echo ' id :' . $res->id . ' username is :' . $res->username;
     }
+
+echo "<p>&nbsp;</p>";
+// insert into
+
+$query = new Query;
+$query->create('user');
+$query->name = "Andy Laser";
+$query->email = 'my_email@gmail.com';
+$query->username = "laser";
+$query->save();
+
+echo "<pre>";print_r($query);
+
+
+
+echo 'update date is :' . $query->updateDate . ' and table name is ' . $query->table;
