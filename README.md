@@ -73,6 +73,20 @@ echo 'my id is:' . $query->id . ' and my name is ' . $query->name. ' and table n
 ```
 
 
+### update data
+
+This following example how to insert data 
+```php
+$user = new Query();
+$user->find('user')->where(['id' => 12])->one();
+
+$user->username = 'testing1123232';
+$user->save();
+
+echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table name is ' . $query->table;
+```
+
+
 ### looping
 
 

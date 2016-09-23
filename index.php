@@ -49,10 +49,12 @@ print_r($query);
 
 echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table name is ' . $query->table;
 
-//
-//
-//$user = new Query();
-//$user->find('user')->where(['id' => 12])->one();
-//
-//$user->username = 'laser12';
-//$user->save();
+
+
+$user = new Query();
+$user->find('user')->where(['id' => 12])->one();
+
+$user->username = 'testing1123232';
+$user->save();
+
+echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table name is ' . $query->table;

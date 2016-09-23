@@ -15,6 +15,7 @@ class Query {
     public $statement;
     public $selectFrom;
     public $insertInto;
+    public $setFields;
     public $where;
     public $limit;
     public $arrayWhere;
@@ -90,6 +91,17 @@ class Query {
         return $this;
     }
 
+    public function setFields()
+    {
+        $setFields = '';
+        if ($this->_property)
+            foreach ($this->_property as $k => $v) {
+                $setFields .= $k . " = :" . $k . ",";
+            }
+
+        $this->setFields = substr_replace($setFields, '', -1);;
+    }
+
     public function statement($statement = NULL)
     {
         if (empty($statement))
@@ -131,6 +143,10 @@ class Query {
     {
         if ($this->isModel) {
             
+            $this->setFields();
+
+            $this->statement = "UPDATE " . $this->table . " SET " . $this->setFields . $this->where;
+            
         } else {
             $statement = 'insert into `' . $this->table . '`  ';
             $statement .= "(" . implode(",", array_keys($this->_property)) . ")";
@@ -140,9 +156,11 @@ class Query {
             $this->statement = $statement;
         }
 
+        
+        $array = array_merge((array) $this->_property, (array) $this->arrayWhere);
 
         $query = $this->connect->prepare($this->statement);
-        $query->execute($this->_property);
+        $query->execute($array);
 
         $this->_property = $this->find($this->table)->where(['id' => $this->connect->lastInsertId()])->one();
 
