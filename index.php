@@ -58,3 +58,8 @@ $user->username = 'testing1123232';
 $user->save();
 
 echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table name is ' . $query->table;
+
+
+$delete = new Query();
+$delete->find('user')->where(['username' => 'laser'])->one();
+$delete->delete();

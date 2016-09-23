@@ -87,6 +87,27 @@ echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table 
 ```
 
 
+### delete data
+
+This following example how to update data and using where and one() method
+```php
+
+//delete one
+$user = new Query();
+$user->find('user')->where(['username' => 'laser])->one();
+
+$user->delete();
+
+
+//delete all
+$users = new Query();
+$users->find('user')->where(['username' => 'laser])->all();
+
+$users->delete();
+```
+
+
+
 ### looping
 
 

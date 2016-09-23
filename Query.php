@@ -24,6 +24,7 @@ class Query {
     public $table;
     public $_property = [];
     public $isModel = false;
+    public $isModelArray = false;
 
     public function __construct()
     {
@@ -99,7 +100,8 @@ class Query {
                 $setFields .= $k . " = :" . $k . ",";
             }
 
-        $this->setFields = substr_replace($setFields, '', -1);;
+        $this->setFields = substr_replace($setFields, '', -1);
+        ;
     }
 
     public function statement($statement = NULL)
@@ -136,17 +138,18 @@ class Query {
         }
         $row->execute();
 
+        $this->isModelArray = true;
+
         return $row->fetchAll(\PDO::FETCH_OBJ);
     }
 
     public function save()
     {
         if ($this->isModel) {
-            
+
             $this->setFields();
 
             $this->statement = "UPDATE " . $this->table . " SET " . $this->setFields . $this->where;
-            
         } else {
             $statement = 'insert into `' . $this->table . '`  ';
             $statement .= "(" . implode(",", array_keys($this->_property)) . ")";
@@ -156,7 +159,7 @@ class Query {
             $this->statement = $statement;
         }
 
-        
+
         $array = array_merge((array) $this->_property, (array) $this->arrayWhere);
 
         $query = $this->connect->prepare($this->statement);
@@ -165,6 +168,16 @@ class Query {
         $this->_property = $this->find($this->table)->where(['id' => $this->connect->lastInsertId()])->one();
 
         return $this;
+    }
+
+    public function delete()
+    {
+        if ($this->isModel || $this->isModelArray) {
+            $this->statement = "DELETE from " . $this->table . $this->where . $this->limit;
+            $query = $this->connect->prepare($this->statement);
+
+            $query->execute($this->arrayWhere);
+        }
     }
 
 }
