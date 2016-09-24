@@ -172,12 +172,19 @@ class Query {
 
     public function delete()
     {
-        if ($this->isModel || $this->isModelArray) {
-            $this->statement = "DELETE from " . $this->table . $this->where . $this->limit;
-            $query = $this->connect->prepare($this->statement);
+        $this->limit = " LIMIT 1 ";
+        $this->statement = "DELETE from " . $this->table . $this->where . $this->limit;
+        $query = $this->connect->prepare($this->statement);
 
-            $query->execute($this->arrayWhere);
-        }
+        return $query->execute($this->arrayWhere);
+    }
+
+    public function deleteAll()
+    {
+        $this->statement = "DELETE from " . $this->table . $this->where;
+        $query = $this->connect->prepare($this->statement);
+
+        return $query->execute($this->arrayWhere);
     }
 
 }

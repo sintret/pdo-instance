@@ -18,7 +18,7 @@ Edit the file in `Db.php` with real data, for example :
 Query Programming
 -------------
 
-This class have multiple method like "find, where, limit, orderBy, statement". Please see the example using this class.
+This class have multiple method like "find, where, limit, orderBy, statement, one, all, save, delete, deleteAll". Please see the example using this class.
 Please ensure you have include 'Query.php'
 
 ### select one
@@ -89,21 +89,39 @@ echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table 
 
 ### delete data
 
-This following example how to update data and using where and one() method
+This following example how to delete using delete() or deleteAll(). 
+Callback value 1 for success or 0 not success
 ```php
 
-//delete one
-$user = new Query();
-$user->find('user')->where(['username' => 'laser])->one();
 
-$user->delete();
+//delete one
+//return 1 or 0
+
+$delete = new Query();
+$delete->find("user")->where(['status' => 1])->delete();
+
+// or you can do like this following
+
+$users = new Query();
+$users->find('user')->where(['username' => 'laser])->one();
+
+$users->delete();
 
 
 //delete all
+//return 1 or 0
+
+$delete = new Query();
+$delete->find("user")->where(['status' => 1])->deleteAll();
+
+// or you can do like this following
+
 $users = new Query();
 $users->find('user')->where(['username' => 'laser])->all();
 
-$users->delete();
+$users->deleteAll();
+
+
 ```
 
 

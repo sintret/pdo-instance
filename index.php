@@ -4,14 +4,14 @@ ini_set("dispaly_errors", 1);
 include 'Query.php';
 
 /*
- * select * from user where roleId = 3
+ * select * from user where status = 1
  * with all data
  * just like this following code
  */
 
 $query = new Query;
 $query->find("user")
-        ->where(['roleId' => 3])
+        ->where(['status' => 1])
         ->limit(2)
         ->orderBy("id desc");
 

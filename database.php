@@ -6,19 +6,24 @@ ini_set("dispaly_errors", 1);
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-include 'Model.php';
-$query = new Model();
+include 'Query.php';
+$query = new Query();
+$query->find("user");
+$query->username = 'my_username';
+$query->email = 'my_email@gmail.com';
+$query->status = 1;
+$query->name = "My Name";
 
-//$query->find('article')->where(['id' => 8]);
+$result = $query->save();
 
-$query->find('article');
-//$query->where(['id' => 8]);
-$r = $query->all();
 
 echo "<pre>";
-print_r($r);
+print_r($result);
+
+echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table name is ' . $query->table;
 
 
-echo $r->id;
+$delete = new Query();
+echo $delete->find("user")->where(['status' => 1])->deleteAll();
 
-echo "test";
+
