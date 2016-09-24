@@ -151,6 +151,7 @@ class Query {
 
             $this->statement = "UPDATE " . $this->table . " SET " . $this->setFields . $this->where;
         } else {
+            
             $statement = 'insert into `' . $this->table . '`  ';
             $statement .= "(" . implode(",", array_keys($this->_property)) . ")";
             $statement .= ' VALUES ';
@@ -158,7 +159,6 @@ class Query {
 
             $this->statement = $statement;
         }
-
 
         $array = array_merge((array) $this->_property, (array) $this->arrayWhere);
 
