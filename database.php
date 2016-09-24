@@ -20,10 +20,28 @@ $result = $query->save();
 echo "<pre>";
 print_r($result);
 
-echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table name is ' . $query->table;
+//echo 'my id is:' . $query->id . ' and my name is ' . $query->name . ' and table name is ' . $query->table;
 
 
-$delete = new Query();
-echo $delete->find("user")->where(['status' => 1])->deleteAll();
+//$delete = new Query();
+//echo $delete->find("user")->where(['status' => 1])->deleteAll();
 
+
+$qr = new Query();
+$models = $qr->find("user")
+        ->where(['status'=>1])
+        ->andFilterWhere(['LIKE', 'name', '%Andy%'])
+        ->all();
+if ($models)
+    foreach ($models as $model) {
+        echo 'name is :' . $model->name . ' and username is ' . $model->username . ' <p>';
+    }
+
+
+echo $qr->statement();
+
+echo "<br>";
+
+print_r($models);
+print_r($qr->arrayWhere);
 

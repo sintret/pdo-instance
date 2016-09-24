@@ -23,11 +23,11 @@ Please ensure you have include 'Query.php'
 
 ### select one
 
-This following code will get single row using `one` method.
+This following code will get single row using one() method.
 ```php
 $query = new Query;
 $query->find("my_table")
-        ->where(['roleId' => 3])
+        ->where(['status' => 1])
         ->orderBy("id desc");
 
 //print result single row using one()
@@ -44,7 +44,7 @@ This following code will get many row using `all` method.
 ```php
 $query = new Query;
 $query->find("user")
-        ->where(['roleId' => 3])
+        ->where(['status' => 1])
         ->limit(2)
         ->orderBy("id desc");
 
@@ -54,6 +54,21 @@ $result = $query->all();
 echo "<pre>";print_r($result);
 ```
 
+### select and filter where
+
+
+This following code will get many row using all() method.
+```php
+$qr = new Query();
+$models = $qr->find("user")
+        ->where(['status'=>1])
+        ->andFilterWhere(['LIKE', 'name', '%Andy%'])
+        ->all();
+if ($models)
+    foreach ($models as $model) {
+        echo 'name is :' . $model->name . ' and username is ' . $model->username . ' <p>';
+    }
+```
 
 ### insert data
 
