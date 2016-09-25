@@ -15,6 +15,7 @@ class Query {
     public $statement;
     public $selectFrom;
     public $insertInto;
+    public $select = ' * ';
     public $setFields;
     public $where;
     public $limit;
@@ -57,7 +58,14 @@ class Query {
     public function find($table)
     {
         $this->table = $table;
-        $this->selectFrom = "select * from `$table` ";
+        $this->selectFrom = 'select ' . $this->select . ' from `$table` ';
+
+        return $this;
+    }
+
+    public function select($select)
+    {
+        $this->select = $select;
 
         return $this;
     }
@@ -76,7 +84,7 @@ class Query {
         return $this;
     }
 
-    public function andFilterWhere($array = [])
+    private function filterWhere($pattern, $array = [])
     {
         if ($array) {
 
@@ -89,19 +97,25 @@ class Query {
                 $where .= ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
             } else {
 
-                $where .= ' AND ';
+                $where .= ' ' . $pattern . ' ';
                 $this->arrayWhere = array_merge((array) $this->arrayWhere, (array) $arrayWhere);
                 $where .= ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
             }
 
             $this->where = $where;
         }
+    }
+
+    public function andFilterWhere($array = [])
+    {
+        $this->filterWhere('AND', $array);
 
         return $this;
     }
 
     public function orFilterWhere($array = [])
     {
+        $this->filterWhere('OR', $array);
 
         return $this;
     }
@@ -146,7 +160,7 @@ class Query {
         $this->limit = " LIMIT 1 ";
         $row = $this->connect->prepare($this->statement());
         $row->execute($this->arrayWhere);
-        
+
         $this->isModel = true;
 
         return $row->fetch(\PDO::FETCH_OBJ);
