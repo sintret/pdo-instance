@@ -68,6 +68,14 @@ if ($models)
     foreach ($models as $model) {
         echo 'name is :' . $model->name . ' and username is ' . $model->username . ' <p>';
     }
+
+// Search IN array
+$qr = new Query();
+$models = $qr->find("user")
+        ->where(['status' => 1])
+        ->andFilterWhere(['IN', 'id', [1, 2, 3, 4, 5, 6, 7, 9, 10, 11]])
+        ->all()
+        ;
 ```
 
 ### insert data

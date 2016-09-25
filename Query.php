@@ -58,7 +58,7 @@ class Query {
     public function find($table)
     {
         $this->table = $table;
-        $this->selectFrom = 'select ' . $this->select . ' from `$table` ';
+        $this->selectFrom = 'select ' . $this->select . ' from `' . $table . '`  ';
 
         return $this;
     }
@@ -90,16 +90,30 @@ class Query {
 
             $arrayWhere = [$array[1] => $array[2]];
             $where = $this->where;
-            if (empty($where)) {
 
-                $where .= ' WHERE ';
-                $this->arrayWhere = $arrayWhere;
-                $where .= ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
+            $cWhere = empty($where) ? ' WHERE ' : ' ' . $pattern . ' ';
+
+            $resolvedPattern = trim(strtolower($array[0]));
+            if ($resolvedPattern == 'in') {
+                $qMarks = '';
+                if ($array[2])
+                    foreach ($array[2] as $k => $v) {
+
+                        $key = $array[1] . $k;
+                        $qMarks .= ':' . $key . ',';
+
+                        $keyArray[$key] = $v;
+                    }
+
+                $qMarks = substr_replace($qMarks, '', -1);
+
+                $where .= $cWhere . ' `' . $array[1] . '` ' . $array[0] . ' (' . $qMarks . ')';
+
+                $this->arrayWhere = array_merge((array) $this->arrayWhere, (array) $keyArray);
             } else {
-
-                $where .= ' ' . $pattern . ' ';
+                
+                $where .= $cWhere . ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
                 $this->arrayWhere = array_merge((array) $this->arrayWhere, (array) $arrayWhere);
-                $where .= ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
             }
 
             $this->where = $where;
