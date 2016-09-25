@@ -24,6 +24,7 @@ class Query {
     public $create;
     public $table;
     public $_property = [];
+    public $_relation = [];
     public $isModel = false;
     public $isModelArray = false;
 
@@ -106,12 +107,11 @@ class Query {
                     }
 
                 $qMarks = substr_replace($qMarks, '', -1);
-
                 $where .= $cWhere . ' `' . $array[1] . '` ' . $array[0] . ' (' . $qMarks . ')';
 
                 $this->arrayWhere = array_merge((array) $this->arrayWhere, (array) $keyArray);
             } else {
-                
+
                 $where .= $cWhere . ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
                 $this->arrayWhere = array_merge((array) $this->arrayWhere, (array) $arrayWhere);
             }
@@ -232,6 +232,44 @@ class Query {
         $query = $this->connect->prepare($this->statement);
 
         return $query->execute($this->arrayWhere);
+    }
+
+    public function hasOne($array = [])
+    {
+
+        if ($array)
+            foreach ($array as $k => $v) {
+
+                $query = new self();
+
+                if (isset($v['find']))
+                    $query->find($v['find']);
+
+                if (isset($v['select']))
+                    $query->select($v['select']);
+
+                if (isset($v['statement']))
+                    $query->statement($v['statement']);
+
+                if (isset($v['where'])) {
+                    $where = [];
+                    foreach ($v['where'] as $key => $value) {
+                        $where[$key] = $this->_property[$value];
+                        $where[$key] = $this->$value;
+                    }
+
+                    $query->where($where);
+                }
+
+                echo "<pre>";
+                print_r($query);
+
+                $result = $query->one();
+
+                $this->_relation[$k] = $query->one();
+            }
+
+        return $this;
     }
 
 }
