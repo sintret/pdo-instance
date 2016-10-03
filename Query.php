@@ -78,7 +78,7 @@ class Query {
         $columns = $this->getColumnNames($table);
         if ($columns)
             foreach ($columns as $column) {
-                $this->_property[$column] = 1;
+                $this->_property[$column] = NULL;
             }
     }
 
