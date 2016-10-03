@@ -7,7 +7,8 @@
  * https://sintret.com
  */
 
-include 'Db.php';
+$db = dirname(__FILE__) . '\Db.php';
+require_once $db;
 
 class Query {
 
@@ -15,7 +16,6 @@ class Query {
     public $statement;
     public $selectFrom;
     public $insertInto;
-    public $select = ' * ';
     public $setFields;
     public $where;
     public $limit;
@@ -24,13 +24,12 @@ class Query {
     public $create;
     public $table;
     public $_property = [];
-    public $_relation = [];
     public $isModel = false;
     public $isModelArray = false;
 
     public function __construct()
     {
-        $this->connect = Db::instance();
+       $this->connect = Db::instance();
     }
 
     public function __set($key, $value)
@@ -45,7 +44,7 @@ class Query {
     public function __get($key)
     {
         if (!property_exists($this, $key)) {
-            return $this->_property[$key];
+            return $this->_property->$key;
         }
     }
 
@@ -56,45 +55,10 @@ class Query {
         return $this;
     }
 
-    public function getColumnNames($table = NULL)
-    {
-        if (empty($table))
-            $table = $this->table;
-
-        $sql = 'DESCRIBE `' . $table . '`';
-        $query = $this->connect->prepare($sql);
-        $query->execute([':table' => $table]);
-
-        $output = [];
-        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $output[] = $row['Field'];
-        }
-
-        return $output;
-    }
-
-    public function generateProperties($table = NULL)
-    {
-        $columns = $this->getColumnNames($table);
-        if ($columns)
-            foreach ($columns as $column) {
-                $this->_property[$column] = NULL;
-            }
-    }
-
     public function find($table)
     {
         $this->table = $table;
-        $this->selectFrom = 'select ' . $this->select . ' from `' . $table . '`  ';
-
-        $this->generateProperties($table);
-
-        return $this;
-    }
-
-    public function select($select)
-    {
-        $this->select = $select;
+        $this->selectFrom = "select * from `$table` ";
 
         return $this;
     }
@@ -113,51 +77,32 @@ class Query {
         return $this;
     }
 
-    private function filterWhere($pattern, $array = [])
+    public function andFilterWhere($array = [])
     {
         if ($array) {
 
             $arrayWhere = [$array[1] => $array[2]];
             $where = $this->where;
+            if (empty($where)) {
 
-            $cWhere = empty($where) ? ' WHERE ' : ' ' . $pattern . ' ';
-
-            $resolvedPattern = trim(strtolower($array[0]));
-            if ($resolvedPattern == 'in') {
-                $qMarks = '';
-                if ($array[2])
-                    foreach ($array[2] as $k => $v) {
-
-                        $key = $array[1] . $k;
-                        $qMarks .= ':' . $key . ',';
-
-                        $keyArray[$key] = $v;
-                    }
-
-                $qMarks = substr_replace($qMarks, '', -1);
-                $where .= $cWhere . ' `' . $array[1] . '` ' . $array[0] . ' (' . $qMarks . ')';
-
-                $this->arrayWhere = array_merge((array) $this->arrayWhere, (array) $keyArray);
+                $where .= ' WHERE ';
+                $this->arrayWhere = $arrayWhere;
+                $where .= ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
             } else {
 
-                $where .= $cWhere . ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
+                $where .= ' AND ';
                 $this->arrayWhere = array_merge((array) $this->arrayWhere, (array) $arrayWhere);
+                $where .= ' `' . $array[1] . '` ' . $array[0] . ' :' . $array[1];
             }
 
             $this->where = $where;
         }
-    }
-
-    public function andFilterWhere($array = [])
-    {
-        $this->filterWhere('AND', $array);
 
         return $this;
     }
 
     public function orFilterWhere($array = [])
     {
-        $this->filterWhere('OR', $array);
 
         return $this;
     }
@@ -202,12 +147,10 @@ class Query {
         $this->limit = " LIMIT 1 ";
         $row = $this->connect->prepare($this->statement());
         $row->execute($this->arrayWhere);
-
+        
         $this->isModel = true;
 
-        $this->_property = $row->fetch(\PDO::FETCH_ASSOC);
-
-        return $this;
+        return $row->fetch(\PDO::FETCH_OBJ);
     }
 
     public function all()
@@ -262,44 +205,6 @@ class Query {
         $query = $this->connect->prepare($this->statement);
 
         return $query->execute($this->arrayWhere);
-    }
-
-    public function hasOne($array = [])
-    {
-
-        if ($array)
-            foreach ($array as $k => $v) {
-
-                $query = new self();
-
-                if (isset($v['find']))
-                    $query->find($v['find']);
-
-                if (isset($v['select']))
-                    $query->select($v['select']);
-
-                if (isset($v['statement']))
-                    $query->statement($v['statement']);
-
-                if (isset($v['where'])) {
-                    $where = [];
-                    foreach ($v['where'] as $key => $value) {
-                        $where[$key] = $this->_property[$value];
-                        $where[$key] = $this->$value;
-                    }
-
-                    $query->where($where);
-                }
-
-                echo "<pre>";
-                print_r($query);
-
-                $result = $query->one();
-
-                $this->_relation[$k] = $query->one();
-            }
-
-        return $this;
     }
 
 }
