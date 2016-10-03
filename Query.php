@@ -30,7 +30,7 @@ class Query {
 
     public function __construct()
     {
-        return $this->connect = Db::instance();
+        $this->connect = Db::instance();
     }
 
     public function __set($key, $value)
@@ -45,7 +45,7 @@ class Query {
     public function __get($key)
     {
         if (!property_exists($this, $key)) {
-            return $this->_property->$key;
+            return $this->_property[$key];
         }
     }
 
@@ -56,10 +56,38 @@ class Query {
         return $this;
     }
 
+    public function getColumnNames($table = NULL)
+    {
+        if (empty($table))
+            $table = $this->table;
+
+        $sql = 'DESCRIBE `' . $table . '`';
+        $query = $this->connect->prepare($sql);
+        $query->execute([':table' => $table]);
+
+        $output = [];
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $output[] = $row['Field'];
+        }
+
+        return $output;
+    }
+
+    public function generateProperties($table = NULL)
+    {
+        $columns = $this->getColumnNames($table);
+        if ($columns)
+            foreach ($columns as $column) {
+                $this->_property[$column] = 1;
+            }
+    }
+
     public function find($table)
     {
         $this->table = $table;
         $this->selectFrom = 'select ' . $this->select . ' from `' . $table . '`  ';
+
+        $this->generateProperties($table);
 
         return $this;
     }
@@ -177,7 +205,9 @@ class Query {
 
         $this->isModel = true;
 
-        return $row->fetch(\PDO::FETCH_OBJ);
+        $this->_property = $row->fetch(\PDO::FETCH_ASSOC);
+
+        return $this;
     }
 
     public function all()
