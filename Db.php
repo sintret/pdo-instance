@@ -15,10 +15,6 @@ class Db {
      * @var PDOConnection
      */
     protected static $_instance = null;
-    protected static $username = "root";
-    protected static $password = "";
-    protected static $dsn = "mysql:host=localhost;dbname=test";
-
     /**
      * Returns singleton instance
      *
@@ -31,7 +27,8 @@ class Db {
             $conn = null;
             try {
 
-                $conn = new \PDO(self::$dsn, self::$username, self::$password);
+                include dirname(__FILE__) . '\config.php';                
+                $conn = new \PDO("mysql:host=$host;dbname=$db", $username, $password);
 
                 //Set common attributes
                 $conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
